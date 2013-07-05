@@ -18,6 +18,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+
+from mongolite import Connection
+
+MONGO_CONNECTION = Connection("127.0.0.1")
+MONGO_DB = MONGO_CONNECTION["happyperform"]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
