@@ -196,3 +196,5 @@ LOGGING = {
         },
     }
 }
+
+HP_KEY = "happyperform21311028309218321098r"

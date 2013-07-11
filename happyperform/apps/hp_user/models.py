@@ -1,28 +1,38 @@
 import mongoengine as me
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.hashers import check_password, make_password
+import hmac
+import re
+import uuid
+try:
+    from hashlib import sha1
+except ImportError:
+    import sha
+    sha1 = sha.sha
+
+
+EMAIL_RE = re.compile(r'^[\w\d._%+-]+@[\w\d.-]+\.[A-Za-z]{2,4}$')
 
 
 class User(me.Document):
 
-    email = me.EmailField(verbose_name=_("email address"))
+    email = me.StringField(
+        required=True,
+        regex=EMAIL_RE,
+        primary_key=True,
+        verbose_name=_("email address"))
     is_active = me.BooleanField(default=True, verbose_name=_("active")) 
     password = me.StringField(max_length=128, verbose_name=_('password'))
+    api_key = me.StringField(max_length=256, default='')
 
-    username = me.StringField(max_length=30, required=True, verbose_name=_("username"))
-
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ['email']
-
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
     meta = {
-        'allow_inheritance': True,
-        'indexes': [
-            {'fields': ['username'], 'unique': True, 'sparse': True}
-        ]
+        'allow_inheritance': False,
     }
 
     def __unicode__(self):
-        return self.usernames
+        return self.pk
 
     def is_authenticated(self):
         return True
@@ -44,25 +54,21 @@ class User(me.Document):
         """
         return check_password(raw_password, self.password)
 
+    def save(self, *args, **kwargs):
+        if not self.api_key:
+            self.api_key = self.generate_key()
+        return super(User, self).save(*args, **kwargs)
+
+    def generate_key(self):
+        new_uuid = uuid.uuid4()
+        return hmac.new(str(new_uuid), digestmod=sha1).hexdigest()
+
     @classmethod
-    def create_user(cls, username, password, email=None):
+    def create_user(cls, password, email):
         """Create (and save) a new user with the given username, password and
         email address.
         """
-        now = datetime_now()
-
-        # Normalize the address by lowercasing the domain part of the email
-        # address.
-        if email is not None:
-            try:
-                email_name, domain_part = email.strip().split('@', 1)
-            except ValueError:
-                pass
-            else:
-                email = '@'.join([email_name, domain_part.lower()])
-
-        user = cls(username=username, email=email, date_joined=now)
+        user = cls(email=email)
         user.set_password(password)
         user.save()
         return user
-
