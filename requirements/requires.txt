@@ -10,7 +10,7 @@ python-memcached==1.48
 simplejson==3.0.7
 suds==0.4
 django-tastypie
-mongolite
+django-tastypie-mongoengine
 # amqp==1.0.6
 # required by: kombu
 # anyjson==0.3.3

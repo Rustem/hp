@@ -3,6 +3,9 @@
 import os
 import sys
 
+import mongoengine
+mongoengine.connect("hp")
+
 
 def rel(*x):
     return os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -19,10 +22,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 
-from mongolite import Connection
 
-MONGO_CONNECTION = Connection("127.0.0.1")
-MONGO_DB = MONGO_CONNECTION["happyperform"]
 
 DATABASES = {
     'default': {
@@ -149,11 +149,14 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'tastypie',
     'hp_home',
+    'hp_user',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sessions',
+    'mongoengine.django.mongo_auth'
     #'django.contrib.auth',
     #'django.contrib.sites',
     # Uncomment the next line to enable the admin:
@@ -161,6 +164,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+MONGOENGINE_USER_DOCUMENT = 'hp_user.models.User'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

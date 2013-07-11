@@ -1,12 +1,15 @@
 from django.conf.urls import patterns, include, url
-
+from tastypie.api import Api
+from hp_task.resources import TaskResource
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
-
-urlpatterns = patterns('',
-    url(r'^', include('hp_home.urls'))
-
+v1_api = Api(api_name='v1')
+v1_api.register(TaskResource())
+urlpatterns = patterns(
+    '',
+    url(r'^', include('hp_home.urls')),
+    url(r'^api/', include(v1_api.urls)),
     # Examples:
     # url(r'^$', 'happyperform.views.home', name='home'),
     # url(r'^happyperform/', include('happyperform.foo.urls')),
