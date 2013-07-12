@@ -69,7 +69,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -149,14 +149,15 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'mongoengine.django.mongo_auth',
     'tastypie',
+    'tastypie_mongoengine',
     'hp_home',
     'hp_user',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sessions',
-    'mongoengine.django.mongo_auth'
     #'django.contrib.auth',
     #'django.contrib.sites',
     # Uncomment the next line to enable the admin:

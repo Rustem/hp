@@ -48,7 +48,6 @@ class ApiKeyAuthentication(OldApiKeyAuthentication):
 
     def is_authenticated(self, request, **kwargs):
         r"""Finds the user and checks it's by API key."""
-
         try:
             email, api_key = self.extract_credentials(request)
         except ValueError:
@@ -62,7 +61,7 @@ class ApiKeyAuthentication(OldApiKeyAuthentication):
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return self._unauthorized()
 
-        if user.is_active():
+        if not user.is_active():
             return False
         return self.get_key(user, api_key)
 
