@@ -3,6 +3,12 @@ from django.utils.translation import ugettext_lazy as _
 import datetime
 
 
+STATUSES = (
+    CREATED,
+    IN_PROGRESS,
+    FINISHED) = range(3)
+
+
 class BallMixin(object):
     irad = me.FloatField(default=2.0, verbose_name=_("initial radius"))
     cur_rad = me.FloatField(default=2.0, verbose_name=_("current radius"))
@@ -16,8 +22,9 @@ class Task(BallMixin, me.Document):
     cd = me.DateTimeField(required=True, verbose_name=_("date created"))
     dd = me.DateTimeField(required=True, verbose_name=_("deadline date"))
     creator = me.ReferenceField(
-        "User",
-        dbref=True, required=True, verbose_name=_("creator"))
+        "User", dbref=True, required=True,
+        verbose_name=_("creator"))
+    status = me.IntField(required=True, default=CREATED)
 
     def save(self, *args, **kwargs):
         self.cd = datetime.datetime.utcnow()

@@ -52,10 +52,6 @@ class AuthResource(resources.MongoEngineResource):
         }
         return self.create_response(request, response())
 
-    def hydrate(self, bundle):
-        print bundle.data
-        raise
-
 
 class UserResource(resources.MongoEngineResource):
 
